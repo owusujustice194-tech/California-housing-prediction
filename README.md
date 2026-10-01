@@ -6,7 +6,7 @@ The project covers automated data ingestion, stratified sampling, pipeline-based
 
 ---
 
-## 📊 Model Performance & Benchmarks
+📊 Model Performance & Benchmarks
 
 Multiple regression architectures were evaluated using 10-fold cross-validation before selecting and fine-tuning the final Random Forest model.
 
@@ -24,28 +24,28 @@ Multiple regression architectures were evaluated using 10-fold cross-validation 
 
 🔑 Top Feature Importances
 
-Using `grid_search.best_estimator_.feature_importances_`, the key drivers of property value predictions were identified:
+Using grid_search.best_estimator_.feature_importances_, the key drivers of property value predictions were identified:
 
-1. `median_income`**: 34.31%
-2. `INLAND` (Ocean Proximity)**: 15.75%
-3. `population_per_household`**: 10.37%
-4. `bedrooms_per_room`**: 8.33%
-5. `longitude`**: 7.88%
-6. `latitude`**: 7.30%
+1. median_income: 34.31%
+2. INLAND` (Ocean Proximity): 15.75%
+3. population_per_household: 10.37%
+4. bedrooms_per_room: 8.33%
+5. longitude: 7.88%
+6. latitude: 7.30%
 
 ---
 
-## 🛠️ End-to-End Workflow
+ 🛠️ End-to-End Workflow
 
-1. **Data Acquisition**: Automated downloading and extracting of the California housing dataset using `urllib.request` and `tarfile`.
-2. **Stratified Sampling**: Binned `median_income` to perform `StratifiedShuffleSplit`, preventing sampling bias between train and test sets.
-3. **Data Transformation Pipeline**:
-   * Imputed missing values with `SimpleImputer(strategy="median")`.
-   * Created custom combined attributes (`rooms_per_household`, `bedrooms_per_room`, `population_per_household`).
-   * Scaled numerical features via `StandardScaler`.
-   * One-hot encoded categorical variables (`ocean_proximity`) via `OneHotEncoder`.
-4. **Hyperparameter Tuning**: Ran `GridSearchCV` over multi-parameter trees to optimize model generalization.
-5. **Model Export**: Saved the fitted preprocessing pipeline and best estimator using `joblib`.
+1. Data Acquisition: Automated downloading and extracting of the California housing dataset using urllib.request and tarfile.
+2. Stratified Sampling: Binned `median_income` to perform `StratifiedShuffleSplit`, preventing sampling bias between train and test sets.
+3. Data Transformation Pipeline:
+     Imputed missing values with `SimpleImputer(strategy="median")`.
+     Created custom combined attributes (`rooms_per_household`, `bedrooms_per_room, population_per_household).
+     Scaled numerical features via `StandardScaler`.
+     One-hot encoded categorical variables (`ocean_proximity`) via `OneHotEncoder.
+4. Hyperparameter Tuning: Ran `GridSearchCV` over multi-parameter trees to optimize model generalization.
+5. Model Export: Saved the fitted preprocessing pipeline and best estimator using joblib.
 
 ---
 
