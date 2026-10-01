@@ -1,42 +1,59 @@
-# California Housing Price Prediction Pipeline
+# California Housing Price Prediction Model 🏡
 
-An end-to-end Machine Learning pipeline built with Scikit-Learn to estimate median housing prices across California districts.
+An end-to-end Machine Learning pipeline built with `scikit-learn` to predict median house values in California block groups. 
 
----
-
-## 📌 Project Overview
-This project processes block-group level housing data from the California Housing dataset to forecast median home values. The pipeline implements stratified sampling, automated preprocessing (imputation, custom ratio attribute combination, standard scaling), hyperparameter tuning via `GridSearchCV`, and model serialization using `joblib`.
+The project covers automated data ingestion, stratified sampling, pipeline-based feature engineering, cross-validation model selection, hyperparameter optimization via `GridSearchCV`, and model deployment using `joblib`.
 
 ---
 
-## 📊 Model Evaluation & Baseline Comparison
+## 📊 Model Performance & Benchmarks
 
-| Model | Evaluation Strategy | Test / CV RMSE | Key Findings |
+Multiple regression architectures were evaluated using 10-fold cross-validation before selecting and fine-tuning the final Random Forest model.
+
+| Model / Stage | 10-Fold CV Mean RMSE ($) | Final Test RMSE ($) | Key Notes |
 | :--- | :--- | :--- | :--- |
-| **Linear Regression** | 10-Fold Cross-Validation | ~$68,600 | High underfitting baseline. |
-| **Decision Tree** | 10-Fold Cross-Validation | ~$70,500 | Severe overfitting on training data. |
-| **Random Forest (Tuned)** | Single Pass Test Evaluation | **$47,535.59** | **Final Model**: Reduced error by over $21,000 against baseline. |
+| **Linear / Single Tree Baselines** | ~$69,392 – $72,072[cite: 12] | — | High error due to severe underfitting / overfitting[cite: 12] |
+| **Random Forest (Default)** | ~$50,636[cite: 12] | — | Significant performance jump over simple baselines[cite: 12] |
+| **Tuned Random Forest (`GridSearchCV`)** | **~$49,421**[cite: 13] | **$47,312.93**[cite: 15] | Optimal parameters: `max_features=6`, `n_estimators=30`[cite: 13] |
+
+### 🎯 Statistical Evaluation
+* **Final Test RMSE:** **$47,312.93**[cite: 15]
+* **95% Confidence Interval for Generalization Error:** **[$45,350.26, $49,197.36]**[cite: 16]
 
 ---
 
-## 🛡️ Production Strategy & Prediction Intervals
+## 🔑 Top Feature Importances
 
-Machine learning models output statistical averages rather than exact prices. To account for the test error margin of **~$47,535**, predictions are served using **95% Prediction Intervals**:
+Using `grid_search.best_estimator_.feature_importances_`, the key drivers of property value predictions were identified:
 
-$$\text{Margin of Error} = 1.96 \times \text{RMSE} \approx \$93,170$$
+1. **`median_income`**: 34.31%[cite: 14]
+2. **`INLAND` (Ocean Proximity)**: 15.75%[cite: 14]
+3. **`population_per_household`**: 10.37%[cite: 14]
+4. **`bedrooms_per_room`**: 8.33%[cite: 14]
+5. **`longitude`**: 7.88%[cite: 14]
+6. **`latitude`**: 7.30%[cite: 14]
 
-* **Sample Point Estimate:** $\$280,000$
-* **Served Valuation Range:** $\$186,830 - \$373,170$
+---
 
-This interval provides end-users with a realistic price window based on statistical confidence.
+## 🛠️ End-to-End Workflow
+
+1. **Data Acquisition**: Automated downloading and extracting of the California housing dataset using `urllib.request` and `tarfile`.
+2. **Stratified Sampling**: Binned `median_income` to perform `StratifiedShuffleSplit`, preventing sampling bias between train and test sets.
+3. **Data Transformation Pipeline**:
+   * Imputed missing values with `SimpleImputer(strategy="median")`.
+   * Created custom combined attributes (`rooms_per_household`, `bedrooms_per_room`, `population_per_household`).
+   * Scaled numerical features via `StandardScaler`.
+   * One-hot encoded categorical variables (`ocean_proximity`) via `OneHotEncoder`.
+4. **Hyperparameter Tuning**: Ran `GridSearchCV` over multi-parameter trees to optimize model generalization[cite: 13].
+5. **Model Export**: Saved the fitted preprocessing pipeline and best estimator using `joblib`[cite: 15].
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-.
-├── MY AI MODEL.ipynb               # Primary notebook (EDA, pipeline, tuning, evaluation)
-├── california_housing_model.pkl    # Serialized pre-trained Random Forest model
-├── full_pipeline.pkl               # Serialized Scikit-Learn preprocessing pipeline
-└── README.md                       # Project documentation
+California-housing-prediction/
+├── MY AI MODEL.ipynb             # Full Jupyter Notebook implementation
+├── california_housing_model.pkl  # Trained Random Forest model
+├── full_pipeline.pkl             # Fitted preprocessing pipeline
+└── README.md                     # Project documentation
